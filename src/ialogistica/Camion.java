@@ -7,11 +7,10 @@ public class Camion {
 	private int pesoActual;
 	private ArrayList<Peticion> peticiones;
 
-	public Camion()
-	{
+	public Camion() {
 		peticiones = new ArrayList<Peticion>();
 	}
-	
+
 	public int getCapacidad() {
 		return capacidad;
 	}
@@ -37,7 +36,30 @@ public class Camion {
 	}
 
 	public void addPeticion(Peticion peticion) {
-		this.peticiones.add(peticion);
+		if (this.peticiones.add(peticion)){
+			this.pesoActual += peticion.getCantidadPeticion();
+			peticion.setAsignada(true);
+		}
+	}
+
+	public void removePeticion(Peticion peticion) {
+		if (this.peticiones.remove(peticion))
+		{
+			this.pesoActual -= peticion.getCantidadPeticion();
+			peticion.setAsignada(false);
+		}
+	}
+
+	public Peticion getPeticion(int idPeticion) {
+		for (int j = 0; j < peticiones.size(); ++j) {
+			if (peticiones.get(j).getIdPeticion() == idPeticion)
+				return peticiones.get(j);
+		}
+		return null;
+	}
+
+	public boolean isFull(int cantidadPeticion) {
+		return capacidad < (pesoActual + cantidadPeticion);
 	}
 
 	@Override
@@ -51,7 +73,18 @@ public class Camion {
 		return result;
 	}
 
-	public boolean isFull(int cantidadPeticion) {
-		return capacidad < (pesoActual + cantidadPeticion);
+	@Override
+	protected Object clone() throws CloneNotSupportedException {
+		Camion result = new Camion();
+
+		result.capacidad = this.capacidad;
+		result.pesoActual = this.pesoActual;
+		result.peticiones = new ArrayList<Peticion>();
+
+		for (int i = 0; i < this.peticiones.size(); i++) {
+			result.peticiones.add((Peticion) this.peticiones.get(i).clone());
+		}
+
+		return result;
 	}
 }

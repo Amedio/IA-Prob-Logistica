@@ -38,9 +38,26 @@ public class Peticion {
 		return asignada;
 	}
 
+	public double getPrecio() {
+		double result = cantidadPeticion
+				* Comunes.PreciosPesosPeticion[(cantidadPeticion / 100) - 1];
+
+		return result;
+	}
+
 	@Override
 	public String toString() {
 		return "ID:" + idPeticion + " -- Cantidad: " + cantidadPeticion
 				+ " -- Hora deseada: " + horaEntrega;
+	}
+
+	@Override
+	protected Object clone() throws CloneNotSupportedException {
+		Peticion result = new Peticion();
+		result.asignada = this.asignada;
+		result.cantidadPeticion = this.cantidadPeticion;
+		result.horaEntrega = this.horaEntrega;
+		result.idPeticion = this.idPeticion;
+		return result;
 	}
 }

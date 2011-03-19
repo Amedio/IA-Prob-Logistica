@@ -56,14 +56,11 @@ public class ProbLogistica {
 		entregas.generateBestSolution();
 		
 		System.out.println(entregas.toString());
+		System.out.println("Heuristica 1: " + entregas.getMaximizedBenefit());
+		System.out.println("Heuristica 2: " + entregas.getMinimizedDeliverTime());
+		
+		
 		/*
-		 * if (Integer.parseInt(args[3]) == 1) {
-		 * entregas.generateSimpleSolution(); } else if
-		 * (Integer.parseInt(args[3]) == 2) { entregas.generateBestSolution(); }
-		 * else { throw new IllegalArgumentException(
-		 * "Parametros incorrectos. Ejecuta el programa sin parametros para ver la ayuda."
-		 * ); }
-		 * 
 		 * // Imprime por pantalla el estado de la solucion inicial
 		 * System.out.println(entregas.toString());
 		 * 
