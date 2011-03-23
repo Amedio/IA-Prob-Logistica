@@ -185,7 +185,7 @@ public class EntregasWorld {
 		return result;
 	}
 
-	public void swap(int centro, int peticion1, int peticion2) {
+	public boolean swap(int centro, int peticion1, int peticion2) {
 		Peticion aux1 = null, aux2 = null;
 		Camion camion1 = null, camion2 = null;
 		for (int i = 0; i < matrizCentrosHoras[centro].length
@@ -203,12 +203,59 @@ public class EntregasWorld {
 		}
 
 		if (camion1 != null && camion2 != null && aux1 != null && aux2 != null) {
-			camion2.removePeticion(aux2);
-			camion2.addPeticion(aux1);
 			camion1.removePeticion(aux1);
-			camion1.addPeticion(aux2);
+			camion2.removePeticion(aux2);
+			if (!camion1.isFull(aux1.getCantidadPeticion())
+					&& !camion2.isFull(aux2.getCantidadPeticion())) {
+				camion1.addPeticion(aux2);
+				camion2.addPeticion(aux1);
+				return true;
+			} else {
+				camion1.addPeticion(aux1);
+				camion2.addPeticion(aux2);
+			}
 		}
 
+		if (aux1 == null)
+			camion1 = null;
+
+		if (aux2 == null)
+			camion2 = null;
+
+		for (int i = 0; i < totalPeticiones.size()
+				&& (aux1 == null || aux2 == null); i++) {
+			if (aux1 == null
+					&& totalPeticiones.get(i).getIdPeticion() == peticion1)
+				aux1 = totalPeticiones.get(i);
+			if (aux2 == null
+					&& totalPeticiones.get(i).getIdPeticion() == peticion2)
+				aux2 = totalPeticiones.get(i);
+		}
+
+		if (aux1 != null && aux2 != null) {
+			if (camion1 != null) {
+				camion1.removePeticion(aux1);
+				if (!camion1.isFull(aux2.getCantidadPeticion())) {
+					totalPeticiones.remove(aux2);
+					camion1.addPeticion(aux2);
+					totalPeticiones.add(aux1);
+					return true;
+				} else {
+					camion1.addPeticion(aux1);
+				}
+			} else if (camion2 != null) {
+				camion2.removePeticion(aux2);
+				if (!camion2.isFull(aux1.getCantidadPeticion())) {
+					totalPeticiones.remove(aux1);
+					camion2.addPeticion(aux1);
+					totalPeticiones.add(aux2);
+					return true;
+				} else {
+					camion2.addPeticion(aux2);
+				}
+			}
+		}
+		return false;
 	}
 
 	@Override
