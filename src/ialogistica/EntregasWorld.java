@@ -4,15 +4,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 public class EntregasWorld {
-	private final int NUM_CENTROS = 6;
-	private final int NUM_HORAS = 10;
 
-	private ArrayList<ArrayList<Peticion>> centrosPeticiones = new ArrayList<ArrayList<Peticion>>(
-			NUM_CENTROS);
-	private ArrayList<Peticion> totalPeticiones = new ArrayList<Peticion>();
-	private Camion[][] matrizCentrosHoras = new Camion[NUM_CENTROS][10];
-	private int[] totalCamiones = new int[3];
-	private int[] libresCamiones = new int[3];
+	public ArrayList<ArrayList<Peticion>> centrosPeticiones = new ArrayList<ArrayList<Peticion>>(
+			Comunes.NUM_CENTROS);
+	public ArrayList<Peticion> totalPeticiones = new ArrayList<Peticion>();
+	public Camion[][] matrizCentrosHoras = new Camion[Comunes.NUM_CENTROS][10];
+	public int[] totalCamiones = new int[3];
+	public int[] libresCamiones = new int[3];
 
 	public EntregasWorld() {
 	}
@@ -20,14 +18,14 @@ public class EntregasWorld {
 	public EntregasWorld(int numPeticiones, int[] numCamiones) {
 		totalCamiones = numCamiones.clone();
 		libresCamiones = numCamiones.clone();
-		for (int i = 0; i < NUM_CENTROS; i++) {
+		for (int i = 0; i < Comunes.NUM_CENTROS; i++) {
 			centrosPeticiones.add(new ArrayList<Peticion>());
 		}
 
 		int centroActual, horaActual, cantidadPeticion = 0;
 		for (int i = 0; i < numPeticiones; ++i) {
-			centroActual = Comunes.MyRandom.nextInt(NUM_CENTROS);
-			horaActual = Comunes.MyRandom.nextInt(NUM_HORAS);
+			centroActual = Comunes.MyRandom.nextInt(Comunes.NUM_CENTROS);
+			horaActual = Comunes.MyRandom.nextInt(Comunes.NUM_HORAS);
 			cantidadPeticion = Comunes.MyRandom.nextInt(5) + 1;
 
 			Peticion peticion = new Peticion();
@@ -40,13 +38,13 @@ public class EntregasWorld {
 			totalPeticiones.add(peticion);
 		}
 
-		for (int i = 0; i < NUM_CENTROS; ++i) {
+		for (int i = 0; i < Comunes.NUM_CENTROS; ++i) {
 			Collections.sort(centrosPeticiones.get(i), new ComparePeticiones());
 			Collections.sort(totalPeticiones, new ComparePeticiones());
 		}
 
-		for (int i = 0; i < NUM_CENTROS; i++) {
-			for (int j = 0; j < NUM_HORAS; j++) {
+		for (int i = 0; i < Comunes.NUM_CENTROS; i++) {
+			for (int j = 0; j < Comunes.NUM_HORAS; j++) {
 				matrizCentrosHoras[i][j] = null;
 			}
 		}
@@ -54,36 +52,34 @@ public class EntregasWorld {
 
 	public void generateSimpleSolution() {
 		ArrayList<Peticion> peticiones;
-		int centroActual, horaActual, capacidadCamion = 0;
+		int horaActual, capacidadCamion = 0;
 		Camion camion = null;
 		int counterCamiones = 0;
-		for (int i = 0; i < NUM_CENTROS; ++i) {
+		for (int i = 0; i < Comunes.NUM_CENTROS; ++i) {
+			for (int j = 0; j < Comunes.NUM_HORAS; j++) {
+				capacidadCamion = Comunes.MyRandom.nextInt(3);
+				camion = new Camion();
+				while (libresCamiones[capacidadCamion] <= 0) {
+					capacidadCamion = Comunes.MyRandom.nextInt(3);
+				}
+				camion.setCapacidad(Comunes.CapacidadesMaximasCamiones[capacidadCamion]);
+				libresCamiones[capacidadCamion]--;
+				matrizCentrosHoras[i][j] = camion;
+			}
+			
 			peticiones = centrosPeticiones.get(i);
 			for (int j = 0; j < peticiones.size(); j++) {
-				centroActual = Comunes.MyRandom.nextInt(NUM_CENTROS);
-				horaActual = Comunes.MyRandom.nextInt(NUM_HORAS);
-				camion = matrizCentrosHoras[centroActual][horaActual];
+				horaActual = Comunes.MyRandom.nextInt(Comunes.NUM_HORAS);
+				camion = matrizCentrosHoras[i][horaActual];
 
 				while (counterCamiones++ < matrizCentrosHoras.length
 						&& camion != null
 						&& camion.isFull(peticiones.get(j)
 								.getCantidadPeticion())) {
-					centroActual = Comunes.MyRandom.nextInt(NUM_CENTROS);
-					horaActual = Comunes.MyRandom.nextInt(NUM_HORAS);
-					camion = matrizCentrosHoras[centroActual][horaActual];
+					horaActual = Comunes.MyRandom.nextInt(Comunes.NUM_HORAS);
+					camion = matrizCentrosHoras[i][horaActual];
 				}
 				counterCamiones = 0;
-
-				if (camion == null) {
-					capacidadCamion = Comunes.MyRandom.nextInt(3);
-					camion = new Camion();
-					while (libresCamiones[capacidadCamion] <= 0) {
-						capacidadCamion = Comunes.MyRandom.nextInt(3);
-					}
-					camion.setCapacidad(Comunes.CapacidadesMaximasCamiones[capacidadCamion]);
-					libresCamiones[capacidadCamion]--;
-					matrizCentrosHoras[centroActual][horaActual] = camion;
-				}
 
 				camion.addPeticion(peticiones.get(j));
 
@@ -96,14 +92,14 @@ public class EntregasWorld {
 		ArrayList<Peticion> peticiones;
 		Camion camion;
 		int capacidadCamion = 2;
-		for (int i = 0; i < NUM_HORAS; i++) {
-			for (int j = 0; j < NUM_CENTROS; j++) {
+		for (int i = 0; i < Comunes.NUM_HORAS; i++) {
+			for (int j = 0; j < Comunes.NUM_CENTROS; j++) {
+				camion = new Camion();
+				while (libresCamiones[capacidadCamion] <= 0)
+					capacidadCamion--;
+				camion.setCapacidad(Comunes.CapacidadesMaximasCamiones[capacidadCamion]);
 				if (pendentPeticiones(j)) {
 					peticiones = centrosPeticiones.get(j);
-					camion = new Camion();
-					while (libresCamiones[capacidadCamion] <= 0)
-						capacidadCamion--;
-					camion.setCapacidad(Comunes.CapacidadesMaximasCamiones[capacidadCamion]);
 					for (int z = 0; z < peticiones.size()
 							&& !camion.isFull(peticiones.get(z)
 									.getCantidadPeticion()); z++) {
@@ -112,8 +108,8 @@ public class EntregasWorld {
 							totalPeticiones.remove(peticiones.get(z));
 						}
 					}
-					matrizCentrosHoras[j][i] = camion;
 				}
+				matrizCentrosHoras[j][i] = camion;
 			}
 		}
 	}
@@ -132,8 +128,8 @@ public class EntregasWorld {
 		Camion camion;
 		ArrayList<Peticion> peticionesCamion;
 		double precioPeticion;
-		for (int i = 0; i < NUM_CENTROS; i++) {
-			for (int j = 0; j < NUM_HORAS; j++) {
+		for (int i = 0; i < Comunes.NUM_CENTROS; i++) {
+			for (int j = 0; j < Comunes.NUM_HORAS; j++) {
 				camion = matrizCentrosHoras[i][j];
 				if (camion != null) {
 					peticionesCamion = camion.getPeticiones();
@@ -164,8 +160,8 @@ public class EntregasWorld {
 		Camion camion;
 		ArrayList<Peticion> peticionesCamion;
 		double horaPeticion;
-		for (int i = 0; i < NUM_CENTROS; i++) {
-			for (int j = 0; j < NUM_HORAS; j++) {
+		for (int i = 0; i < Comunes.NUM_CENTROS; i++) {
+			for (int j = 0; j < Comunes.NUM_HORAS; j++) {
 				camion = matrizCentrosHoras[i][j];
 				if (camion != null) {
 					peticionesCamion = camion.getPeticiones();
@@ -203,16 +199,15 @@ public class EntregasWorld {
 		}
 
 		if (camion1 != null && camion2 != null && aux1 != null && aux2 != null) {
-			camion1.removePeticion(aux1);
-			camion2.removePeticion(aux2);
-			if (!camion1.isFull(aux1.getCantidadPeticion())
-					&& !camion2.isFull(aux2.getCantidadPeticion())) {
+			if (!camion1.isFull(aux2.getCantidadPeticion()
+					- aux1.getCantidadPeticion())
+					&& !camion2.isFull(aux1.getCantidadPeticion()
+							- aux2.getCantidadPeticion())) {
+				camion1.removePeticion(aux1);
+				camion2.removePeticion(aux2);
 				camion1.addPeticion(aux2);
 				camion2.addPeticion(aux1);
 				return true;
-			} else {
-				camion1.addPeticion(aux1);
-				camion2.addPeticion(aux2);
 			}
 		}
 
@@ -233,28 +228,63 @@ public class EntregasWorld {
 		}
 
 		if (aux1 != null && aux2 != null) {
-			if (camion1 != null) {
+			if (camion1 != null
+					&& !camion1.isFull(aux2.getCantidadPeticion()
+							- aux1.getCantidadPeticion())) {
 				camion1.removePeticion(aux1);
-				if (!camion1.isFull(aux2.getCantidadPeticion())) {
-					totalPeticiones.remove(aux2);
-					camion1.addPeticion(aux2);
-					totalPeticiones.add(aux1);
-					return true;
-				} else {
-					camion1.addPeticion(aux1);
-				}
-			} else if (camion2 != null) {
+				totalPeticiones.remove(aux2);
+				camion1.addPeticion(aux2);
+				totalPeticiones.add(aux1);
+				return true;
+			} else if (camion2 != null
+					&& !camion2.isFull(aux1.getCantidadPeticion()
+							- aux2.getCantidadPeticion())) {
 				camion2.removePeticion(aux2);
-				if (!camion2.isFull(aux1.getCantidadPeticion())) {
-					totalPeticiones.remove(aux1);
-					camion2.addPeticion(aux1);
-					totalPeticiones.add(aux2);
-					return true;
-				} else {
-					camion2.addPeticion(aux2);
+				totalPeticiones.remove(aux1);
+				camion2.addPeticion(aux1);
+				totalPeticiones.add(aux2);
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public boolean move(int centro, int hora, int peticion1) {
+		Camion camion = null;
+		Peticion aux1 = null;
+		for (int i = 0; i < Comunes.NUM_HORAS; i++) {
+			camion = matrizCentrosHoras[centro][i];
+			if (camion != null) {
+				aux1 = camion.getPeticion(peticion1);
+				camion.removePeticion(aux1);
+			}
+		}
+
+		if (aux1 == null) {
+			for (int i = 0; i < totalPeticiones.size(); i++) {
+				if (totalPeticiones.get(i).getIdPeticion() == peticion1) {
+					aux1 = totalPeticiones.get(i);
+					totalPeticiones.remove(i);
 				}
 			}
 		}
+
+		camion = matrizCentrosHoras[centro][hora];
+		camion.addPeticion(aux1);
+		return true;
+	}
+
+	public boolean swapCapacidadCamiones(int centro1, int hora1, int centro2,
+			int hora2) {
+		Camion camion1 = matrizCentrosHoras[centro1][hora1];
+		Camion camion2 = matrizCentrosHoras[centro2][hora2];
+		
+		if(camion1.swappable(camion2)){
+			int capacidad1 = camion1.getCapacidad();
+			camion1.setCapacidad(camion2.getCapacidad());
+			camion2.setCapacidad(capacidad1);
+		}
+		
 		return false;
 	}
 
@@ -262,7 +292,7 @@ public class EntregasWorld {
 	public String toString() {
 		String result = new String();
 		ArrayList<Peticion> peticiones;
-		for (int i = 0; i < NUM_CENTROS; i++) {
+		for (int i = 0; i < Comunes.NUM_CENTROS; i++) {
 			result += "Centro (" + i + "):\n";
 			peticiones = centrosPeticiones.get(i);
 			for (int j = 0; j < peticiones.size(); j++) {
@@ -275,8 +305,8 @@ public class EntregasWorld {
 		result += "\n\r";
 
 		Camion camion;
-		for (int i = 0; i < NUM_CENTROS; i++) {
-			for (int j = 0; j < NUM_HORAS; j++) {
+		for (int i = 0; i < Comunes.NUM_CENTROS; i++) {
+			for (int j = 0; j < Comunes.NUM_HORAS; j++) {
 				camion = matrizCentrosHoras[i][j];
 				result += "Centro: " + i + " -- Hora: " + (j + 8) + "\n";
 				if (camion != null)
@@ -297,7 +327,7 @@ public class EntregasWorld {
 		ArrayList<Peticion> peticiones;
 		ArrayList<Peticion> peticionesCloned;
 		Peticion peticionCloned;
-		for (int i = 0; i < NUM_CENTROS; i++) {
+		for (int i = 0; i < Comunes.NUM_CENTROS; i++) {
 			peticionesCloned = new ArrayList<Peticion>();
 			peticiones = centrosPeticiones.get(i);
 			for (int j = 0; j < peticiones.size(); j++) {
