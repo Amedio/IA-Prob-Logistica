@@ -62,7 +62,8 @@ public class Camion {
 	}
 
 	public boolean swappable(Camion camion) {
-		return (this.capacidad >= camion.pesoActual && camion.capacidad >= this.pesoActual );
+		return (this.capacidad >= camion.pesoActual && camion.capacidad >= this.pesoActual)
+				&& (this.capacidad != camion.capacidad);
 	}
 
 	@Override

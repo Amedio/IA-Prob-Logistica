@@ -66,7 +66,7 @@ public class EntregasWorld {
 				libresCamiones[capacidadCamion]--;
 				matrizCentrosHoras[i][j] = camion;
 			}
-			
+
 			peticiones = centrosPeticiones.get(i);
 			for (int j = 0; j < peticiones.size(); j++) {
 				horaActual = Comunes.MyRandom.nextInt(Comunes.NUM_HORAS);
@@ -217,14 +217,14 @@ public class EntregasWorld {
 		if (aux2 == null)
 			camion2 = null;
 
-		for (int i = 0; i < totalPeticiones.size()
+		for (int i = 0; i < centrosPeticiones.get(centro).size()
 				&& (aux1 == null || aux2 == null); i++) {
 			if (aux1 == null
-					&& totalPeticiones.get(i).getIdPeticion() == peticion1)
-				aux1 = totalPeticiones.get(i);
+					&& centrosPeticiones.get(centro).get(i).getIdPeticion() == peticion1)
+				aux1 = centrosPeticiones.get(centro).get(i);
 			if (aux2 == null
-					&& totalPeticiones.get(i).getIdPeticion() == peticion2)
-				aux2 = totalPeticiones.get(i);
+					&& centrosPeticiones.get(centro).get(i).getIdPeticion() == peticion2)
+				aux2 = centrosPeticiones.get(centro).get(i);
 		}
 
 		if (aux1 != null && aux2 != null) {
@@ -249,20 +249,20 @@ public class EntregasWorld {
 		return false;
 	}
 
-	public boolean move(int centro, int hora, int peticion1) {
+	public boolean move(int centro, int hora, int peticion) {
 		Camion camion = null;
 		Peticion aux1 = null;
 		for (int i = 0; i < Comunes.NUM_HORAS; i++) {
 			camion = matrizCentrosHoras[centro][i];
 			if (camion != null) {
-				aux1 = camion.getPeticion(peticion1);
+				aux1 = camion.getPeticion(peticion);
 				camion.removePeticion(aux1);
 			}
 		}
 
 		if (aux1 == null) {
 			for (int i = 0; i < totalPeticiones.size(); i++) {
-				if (totalPeticiones.get(i).getIdPeticion() == peticion1) {
+				if (totalPeticiones.get(i).getIdPeticion() == peticion) {
 					aux1 = totalPeticiones.get(i);
 					totalPeticiones.remove(i);
 				}
@@ -278,13 +278,14 @@ public class EntregasWorld {
 			int hora2) {
 		Camion camion1 = matrizCentrosHoras[centro1][hora1];
 		Camion camion2 = matrizCentrosHoras[centro2][hora2];
-		
-		if(camion1.swappable(camion2)){
+
+		if (camion1.swappable(camion2)) {
 			int capacidad1 = camion1.getCapacidad();
 			camion1.setCapacidad(camion2.getCapacidad());
 			camion2.setCapacidad(capacidad1);
+			return true;
 		}
-		
+
 		return false;
 	}
 
@@ -338,7 +339,14 @@ public class EntregasWorld {
 		}
 
 		result.libresCamiones = this.libresCamiones.clone();
-		result.matrizCentrosHoras = this.matrizCentrosHoras.clone();
+		result.matrizCentrosHoras = new Camion[Comunes.NUM_CENTROS][Comunes.NUM_HORAS];
+		for (int i = 0; i < Comunes.NUM_CENTROS; i++) {
+			for (int j = 0; j < Comunes.NUM_HORAS; j++) {
+				result.matrizCentrosHoras[i][j] = (Camion) matrizCentrosHoras[i][j]
+						.clone();
+			}
+		}
+
 		result.totalCamiones = this.totalCamiones.clone();
 
 		result.totalPeticiones = new ArrayList<Peticion>();
