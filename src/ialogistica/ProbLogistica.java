@@ -1,10 +1,16 @@
 package ialogistica;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.PrintStream;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 import java.util.Random;
 
+import aima.search.framework.HeuristicFunction;
 import aima.search.framework.Problem;
 import aima.search.framework.Search;
 import aima.search.framework.SearchAgent;
@@ -16,50 +22,98 @@ public class ProbLogistica {
 	public static final double P = 0.8;
 	public static int tipo_heur;
 
-	public static void main(String[] args) {
-		/*
-		 * if (args.length != 6 && args.length != 10) { System.out.println(
-		 * "Parametros: random_seed numero_grupos numero_helicopteros solucion_inicial heuristico busqueda"
-		 * ); System.out.println("");
-		 * System.out.println("random_seed: Numero para generar la semilla");
-		 * System
-		 * .out.println("numeros_grupos: Numero de grupos en el problema");
-		 * System
-		 * .out.println("numero_helicopteros: Numero de helicopteros del problema"
-		 * ); System.out.println(
-		 * "solucion_inicial: algoritmo que genera la solucion inicial");
-		 * System.out.println("                  1->solucionSimple");
-		 * System.out.println("                  2->solucionMejor");
-		 * System.out.println("heuristico: funcion heuristica a usar");
-		 * System.out.println("            1-> tiempoTotal");
-		 * System.out.println("            2-> tiempoHeuristico");
-		 * System.out.println("busqueda: algoritmo de busqueda a usar");
-		 * System.out.println("          1-> hill climbing");
-		 * System.out.println("          2-> simulated annealing");
-		 * System.out.println(""); System.out.println(
-		 * "El algoritmo simulated annealing necesita 4 parametros extra: iteraciones, iteraciones por paso, k, lambda"
-		 * ); System.out.println(""); System.exit(-1); }
-		 */
+	private static BufferedReader in = new BufferedReader(
+			new InputStreamReader(System.in));
+	private static PrintStream out = System.out;
 
-		Comunes.MyRandom.setSeed(1);//Integer.parseInt(args[0]));
-		// int numero_grupos = Integer.parseInt(args[1]);
-		// int numero_helicopteros = Integer.parseInt(args[2]);
+	public static void main(String[] args) throws Exception {
 
-		int[] ggg = new int[3];
-		ggg[0] = 20;
-		ggg[1] = 20;
-		ggg[2] = 20;
+		Comunes.MyRandom.setSeed(1);
+		out.println("All your base are belong to us!");
+		out.println("Introduzca el número de peticiones:");
+		int numPeticiones = Integer.parseInt(in.readLine());
 
-		EntregasWorld entregas = new EntregasWorld(10, ggg);
+		int[] camiones = new int[3];
+		int numCamiones = 0;
+		while (numCamiones != 60) {
+			out.println("Introduzca el número de camiones de las siguientes cargas:");
+			out.print("500 kg:");
+			camiones[0] = Integer.parseInt(in.readLine());
+			numCamiones = camiones[0];
+			out.print("1000 kg:");
+			camiones[1] = Integer.parseInt(in.readLine());
+			numCamiones += camiones[1];
+			out.print("2000 kg:");
+			camiones[2] = Integer.parseInt(in.readLine());
+			numCamiones += camiones[2];
+			if (numCamiones != 60)
+				out.println("Cantidad de camiones incorrecta, por favor introduzca una cantidad de camiones TOTAL igual a 60, solo ha introducido "
+						+ numCamiones);
+		}
 
-		//entregas.generateSimpleSolution();
-		entregas.generateBestSolution();
+		out.println("Creando Mundo...");
+		EntregasWorld world = new EntregasWorld(numPeticiones, camiones);
+		out.println("Hello World!");
+
+		out.println();
+		int solucion = 0;
+		while (solucion != 1 && solucion != 2) {
+			out.println("Elija la solución inicial:");
+			out.println("1. Solución simple");
+			out.println("2. Solucion mejor");
+			solucion = Integer.parseInt(in.readLine());
+			if (solucion != 1 && solucion != 2)
+				out.println("Tiene que escoger una de las dos opciones!!!");
+		}
+
+		out.println("Generando solución inicial...");
+
+		switch (solucion) {
+		case 1:
+			world.generateSimpleSolution();
+			break;
+		case 2:
+			world.generateBestSolution();
+			break;
+		default:
+			break;
+		}
 		
-		System.out.println(entregas.toString());
-		System.out.println("Heuristica 1: " + entregas.getMaximizedBenefit());
-		System.out.println("Heuristica 2: " + entregas.getMinimizedDeliverTime());
-		
-		
+		out.println("Solución inicial generada...");
+
+		out.println();
+		int funcHeur = 0;
+		while (funcHeur != 1 && funcHeur != 2) {
+			out.println("Elija la heurística:");
+			out.println("1. Maximizar beneficio");
+			out.println("2. Minimizar valor absoluto del tiempo de entrega");
+			funcHeur = Integer.parseInt(in.readLine());
+			if (funcHeur != 1 && funcHeur != 2)
+				out.println("Tiene que escoger una de las dos opciones!!!");
+		}
+
+		out.println();
+		int alg = 0;
+		while (alg != 1 && alg != 2) {
+			out.println("Elija la heurística:");
+			out.println("1. Hill Climbing");
+			out.println("2. Simulated Annealing");
+			alg = Integer.parseInt(in.readLine());
+			if (alg != 1 && alg != 2)
+				out.println("Tiene que escoger una de las dos opciones!!!");
+		}
+
+		switch (alg) {
+		case 1:
+			BusquedaHC(world, funcHeur);
+			break;
+		case 2:
+			BusquedaSA(world, funcHeur);
+			break;
+		default:
+			break;
+		}
+
 		/*
 		 * // Imprime por pantalla el estado de la solucion inicial
 		 * System.out.println(entregas.toString());
@@ -79,7 +133,7 @@ public class ProbLogistica {
 	/**
 	 * Algoritmo Hill Climbing
 	 */
-/*	private static void BusquedaHC(MapaBoard mapa, int funcion_heuristica) {
+	private static void BusquedaHC(EntregasWorld world, int funcion_heuristica) {
 
 		long start = System.currentTimeMillis();
 		System.out.println("Hill Climbing");
@@ -88,20 +142,20 @@ public class ProbLogistica {
 		try {
 
 			Problem problem;
-
+			HeuristicFunction heuristica = null;
 			// Funcion heuristica segun el parametro introducido
 			if (funcion_heuristica == 1) {
-				Main.tipo_heur = 1;
-				problem = new Problem(mapa, new AimaSucesorHC(),
-						new AimaGoalTest(), new AimaHeuristic1());
+				// Main.tipo_heur = 1;
+				heuristica = new MaximizedBenefitHeur();
 			} else if (funcion_heuristica == 2) {
-				Main.tipo_heur = 2;
-				problem = new Problem(mapa, new AimaSucesorHC(),
-						new AimaGoalTest(), new AimaHeuristic2());
+				// Main.tipo_heur = 2;
+				heuristica = new MinimizedDeliverTimeHeur();
 			} else {
-				throw new IllegalArgumentException(
-						"Parametros incorrectos. Ejecuta el programa sin parametros para ver la ayuda.");
+				throw new IllegalArgumentException("Parametros incorrectos.");
 			}
+
+			problem = new Problem(world, new SucesorHC(),
+					new EntregasGoalTest(), heuristica);
 
 			// Iniciamos la clase AIMA
 			Search search = new HillClimbingSearch();
@@ -117,14 +171,26 @@ public class ProbLogistica {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-	}*/
+	}
 
 	/**
 	 * Algoritmo Simulated Annealing
 	 */
-	/*private static void BusquedaSA(MapaBoard mapa, int funcion_heuristica,
-			int iteraciones, int iteraciones_por_paso, int k, double lambda) {
+	private static void BusquedaSA(EntregasWorld world, int funcion_heuristica) throws Exception{
 
+		
+		
+		
+
+		out.println("Introduzca iteraciones:");
+		int iteraciones = Integer.parseInt(in.readLine());
+		out.println("Introduzca las iteraciones por paso:");
+		int iteraciones_por_paso  = Integer.parseInt(in.readLine());;
+		out.println("Introduzca el factor K:");
+		int k = Integer.parseInt(in.readLine());
+		out.println("Introduzca el valor lambda:");
+		double lambda = Integer.parseInt(in.readLine());
+		
 		long start = System.currentTimeMillis();
 		System.out.println("Simulated Annealing");
 		System.out.println("-------------------");
@@ -133,17 +199,17 @@ public class ProbLogistica {
 
 			Problem problem;
 
+			HeuristicFunction heuristica = null;
 			// Funcion heuristica segun el parametro introducido
 			if (funcion_heuristica == 1) {
-				problem = new Problem(mapa, new AimaSucesorSA(),
-						new AimaGoalTest(), new AimaHeuristic1());
+				heuristica = new MaximizedBenefitHeur();
 			} else if (funcion_heuristica == 2) {
-				problem = new Problem(mapa, new AimaSucesorSA(),
-						new AimaGoalTest(), new AimaHeuristic2());
+				heuristica = new MinimizedDeliverTimeHeur();
 			} else {
-				throw new IllegalArgumentException(
-						"Parametros incorrectos. Ejecuta el programa sin parametros para ver la ayuda.");
+				throw new IllegalArgumentException("Parametros incorrectos.");
 			}
+			problem = new Problem(world, new SucesorSA(),
+					new EntregasGoalTest(), heuristica);
 
 			// Iniciamos la clase AIMA con los parametros especificos del
 			// Simulated Annealing
@@ -162,9 +228,9 @@ public class ProbLogistica {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-	}*/
+	}
 
-	/*private static void printInstrumentation(Properties properties) {
+	private static void printInstrumentation(Properties properties) {
 		Iterator keys = properties.keySet().iterator();
 		while (keys.hasNext()) {
 			String key = (String) keys.next();
@@ -179,6 +245,6 @@ public class ProbLogistica {
 			String action = (String) actions.get(i);
 			System.out.println(action);
 		}
-	}*/
+	}
 
 }

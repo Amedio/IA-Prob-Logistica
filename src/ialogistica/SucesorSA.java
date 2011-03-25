@@ -3,13 +3,14 @@ package ialogistica;
 import java.util.ArrayList;
 import java.util.List;
 
+import aima.search.framework.Successor;
 import aima.search.framework.SuccessorFunction;
 
 public class SucesorSA implements SuccessorFunction {
 
 	@Override
 	public List getSuccessors(Object arg0) {
-		ArrayList<EntregasWorld> result = new ArrayList<EntregasWorld>();
+		ArrayList result = new ArrayList();
 		EntregasWorld worldActual = (EntregasWorld) arg0;
 
 		EntregasWorld worldCopia = null;
@@ -36,9 +37,9 @@ public class SucesorSA implements SuccessorFunction {
 				if (worldCopia.swap(centro, peticiones.get(peticionPos1)
 						.getIdPeticion(), peticiones.get(peticionPos2)
 						.getIdPeticion()))
-					result.add(worldCopia);
+					result.add(new Successor("SWAP", worldCopia));
 				else
-					result = (ArrayList<EntregasWorld>) getSuccessors(worldActual);
+					result = (ArrayList) getSuccessors(worldActual);
 			} catch (CloneNotSupportedException e) {
 				e.printStackTrace();
 			}
@@ -57,12 +58,12 @@ public class SucesorSA implements SuccessorFunction {
 					worldCopia = (EntregasWorld) worldActual.clone();
 					worldCopia.move(centro, hora, peticiones.get(peticionPos1)
 							.getIdPeticion());
-					result.add(worldCopia);
+					result.add(new Successor("MOVE", worldCopia));
 				} catch (CloneNotSupportedException e) {
 					e.printStackTrace();
 				}
 			} else {
-				result = (ArrayList<EntregasWorld>) getSuccessors(worldActual);
+				result = (ArrayList) getSuccessors(worldActual);
 			}
 			break;
 		case 2:
@@ -75,9 +76,9 @@ public class SucesorSA implements SuccessorFunction {
 				worldCopia = (EntregasWorld) worldActual.clone();
 				if (worldCopia.swapCapacidadCamiones(centro1, hora1, centro2,
 						hora2))
-					result.add(worldCopia);
+					result.add(new Successor("SWAP CANTIDAD CAMIONES", worldCopia));
 				else
-					result = (ArrayList<EntregasWorld>) getSuccessors(worldActual);
+					result = (ArrayList) getSuccessors(worldActual);
 			} catch (CloneNotSupportedException e) {
 				e.printStackTrace();
 			}

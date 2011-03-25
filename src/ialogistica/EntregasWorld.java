@@ -45,7 +45,7 @@ public class EntregasWorld {
 
 		for (int i = 0; i < Comunes.NUM_CENTROS; i++) {
 			for (int j = 0; j < Comunes.NUM_HORAS; j++) {
-				matrizCentrosHoras[i][j] = null;
+				matrizCentrosHoras[i][j] = new Camion();
 			}
 		}
 	}
@@ -261,10 +261,10 @@ public class EntregasWorld {
 		}
 
 		if (aux1 == null) {
-			for (int i = 0; i < totalPeticiones.size(); i++) {
-				if (totalPeticiones.get(i).getIdPeticion() == peticion) {
-					aux1 = totalPeticiones.get(i);
-					totalPeticiones.remove(i);
+			for (int i = 0; i < centrosPeticiones.get(centro).size(); i++) {
+				if (centrosPeticiones.get(centro).get(i).getIdPeticion() == peticion) {
+					aux1 = centrosPeticiones.get(centro).get(i);
+					totalPeticiones.remove(aux1);
 				}
 			}
 		}

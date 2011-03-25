@@ -3,13 +3,14 @@ package ialogistica;
 import java.util.ArrayList;
 import java.util.List;
 
+import aima.search.framework.Successor;
 import aima.search.framework.SuccessorFunction;
 
 public class SucesorHC implements SuccessorFunction {
 
 	@Override
 	public List getSuccessors(Object arg0) {
-		ArrayList<EntregasWorld> result = new ArrayList<EntregasWorld>();
+		ArrayList result = new ArrayList();
 		EntregasWorld worldActual = (EntregasWorld) arg0;
 
 		ArrayList<Peticion> peticiones = null;
@@ -29,7 +30,7 @@ public class SucesorHC implements SuccessorFunction {
 						try {
 							worldCopia = (EntregasWorld) worldActual.clone();
 							if (worldCopia.move(i, z, peticion.getIdPeticion()))
-								result.add(worldCopia);
+								result.add(new Successor("MOVE", worldCopia));
 						} catch (CloneNotSupportedException e) {
 							e.printStackTrace();
 						}
@@ -47,7 +48,7 @@ public class SucesorHC implements SuccessorFunction {
 							worldCopia = (EntregasWorld) worldActual.clone();
 							if (worldCopia.swapCapacidadCamiones(centro1,
 									hora1, centro2, hora2))
-								result.add(worldCopia);
+								result.add(new Successor("SWAP CANTIDAD CAMIONES", worldCopia));
 						} catch (CloneNotSupportedException e) {
 							e.printStackTrace();
 						}
@@ -65,7 +66,7 @@ public class SucesorHC implements SuccessorFunction {
 					try {
 						worldCopia = (EntregasWorld) worldActual.clone();
 						if(worldCopia.swap(centro, peticion1, peticion2))
-							result.add(worldCopia);
+							result.add(new Successor("SWAP", worldCopia));
 					} catch (CloneNotSupportedException e) {
 						e.printStackTrace();
 					}
