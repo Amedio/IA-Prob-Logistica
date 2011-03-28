@@ -309,11 +309,10 @@ public class EntregasWorld {
 		for (int i = 0; i < Comunes.NUM_CENTROS; i++) {
 			for (int j = 0; j < Comunes.NUM_HORAS; j++) {
 				camion = matrizCentrosHoras[i][j];
-				result += "Centro: " + i + " -- Hora: " + (j + 8) + "\n";
-				if (camion != null)
+				if(camion.getPesoActual()!=0){
+					result += "Centro: " + i + " -- Hora: " + (j + 8) + "\n";
 					result += camion.toString() + "\n";
-				else
-					result += "NO HAY ENTREGAS\n";
+				}
 			}
 			result += "\n";
 		}

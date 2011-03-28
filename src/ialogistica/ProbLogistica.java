@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Properties;
 import java.util.Random;
 
+import aima.basic.Agent;
 import aima.search.framework.HeuristicFunction;
 import aima.search.framework.Problem;
 import aima.search.framework.Search;
@@ -18,7 +19,7 @@ import aima.search.informed.HillClimbingSearch;
 import aima.search.informed.SimulatedAnnealingSearch;
 
 public class ProbLogistica {
-
+	public int heur;
 	public static final double P = 0.8;
 	public static int tipo_heur;
 
@@ -80,6 +81,8 @@ public class ProbLogistica {
 		}
 		
 		out.println("Solución inicial generada...");
+		out.println(world);
+		out.println(world.getMaximizedBenefit());
 
 		out.println();
 		int funcHeur = 0;
@@ -109,6 +112,8 @@ public class ProbLogistica {
 			break;
 		case 2:
 			BusquedaSA(world, funcHeur);
+			out.println(world);
+			out.println(world.getMaximizedBenefit());
 			break;
 		default:
 			break;
@@ -154,8 +159,7 @@ public class ProbLogistica {
 				throw new IllegalArgumentException("Parametros incorrectos.");
 			}
 
-			problem = new Problem(world, new SucesorHC(),
-					new EntregasGoalTest(), heuristica);
+			problem = new Problem(world, new SucesorHC(), new EntregasGoalTest(), heuristica);
 
 			// Iniciamos la clase AIMA
 			Search search = new HillClimbingSearch();

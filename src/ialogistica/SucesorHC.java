@@ -30,7 +30,7 @@ public class SucesorHC implements SuccessorFunction {
 						try {
 							worldCopia = (EntregasWorld) worldActual.clone();
 							if (worldCopia.move(i, z, peticion.getIdPeticion()))
-								result.add(new Successor("MOVE", worldCopia));
+								result.add(new Successor("MOVE.....new heurisic value: " + worldCopia.getMaximizedBenefit(), worldCopia));
 						} catch (CloneNotSupportedException e) {
 							e.printStackTrace();
 						}
@@ -48,7 +48,7 @@ public class SucesorHC implements SuccessorFunction {
 							worldCopia = (EntregasWorld) worldActual.clone();
 							if (worldCopia.swapCapacidadCamiones(centro1,
 									hora1, centro2, hora2))
-								result.add(new Successor("SWAP CANTIDAD CAMIONES", worldCopia));
+								result.add(new Successor("SWAP CANTIDAD CAMIONES.....new heurisic value: " + worldCopia.getMaximizedBenefit(), worldCopia));
 						} catch (CloneNotSupportedException e) {
 							e.printStackTrace();
 						}
@@ -65,14 +65,15 @@ public class SucesorHC implements SuccessorFunction {
 						.get(centro).size(); peticion2++) {
 					try {
 						worldCopia = (EntregasWorld) worldActual.clone();
-						if(worldCopia.swap(centro, peticion1, peticion2))
-							result.add(new Successor("SWAP", worldCopia));
+						if(worldCopia.swap(centro, worldActual.centrosPeticiones.get(centro).get(peticion1).getIdPeticion() , worldActual.centrosPeticiones.get(centro).get(peticion1).getIdPeticion()))
+							result.add(new Successor("SWAP.....new heurisic value: " + worldCopia.getMaximizedBenefit(), worldCopia));
 					} catch (CloneNotSupportedException e) {
 						e.printStackTrace();
 					}
 				}
 			}
 		}
+		
 
 		return result;
 	}

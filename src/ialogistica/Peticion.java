@@ -48,7 +48,7 @@ public class Peticion {
 	@Override
 	public String toString() {
 		return "ID:" + idPeticion + " -- Cantidad: " + cantidadPeticion
-				+ " -- Hora deseada: " + horaEntrega;
+				+ " -- Hora deseada: " + (horaEntrega +8);
 	}
 
 	@Override
