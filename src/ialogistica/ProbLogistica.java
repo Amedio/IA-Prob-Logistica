@@ -29,7 +29,7 @@ public class ProbLogistica {
 
 	public static void main(String[] args) throws Exception {
 
-		Comunes.MyRandom.setSeed(1);
+		
 		out.println("All your base are belong to us!");
 		out.println("Introduzca el número de peticiones:");
 		int numPeticiones = Integer.parseInt(in.readLine());
@@ -83,7 +83,7 @@ public class ProbLogistica {
 		out.println("Solución inicial generada...");
 		out.println(world);
 		out.println(world.getMaximizedBenefit());
-
+				
 		out.println();
 		int funcHeur = 0;
 		while (funcHeur != 1 && funcHeur != 2) {
@@ -112,8 +112,6 @@ public class ProbLogistica {
 			break;
 		case 2:
 			BusquedaSA(world, funcHeur);
-			out.println(world);
-			out.println(world.getMaximizedBenefit());
 			break;
 		default:
 			break;

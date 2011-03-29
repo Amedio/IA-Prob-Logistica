@@ -54,7 +54,7 @@ public class EntregasWorld {
 		ArrayList<Peticion> peticiones;
 		int horaActual, capacidadCamion = 0;
 		Camion camion = null;
-		int counterCamiones = 0;
+		int counterCamiones;
 		for (int i = 0; i < Comunes.NUM_CENTROS; ++i) {
 			for (int j = 0; j < Comunes.NUM_HORAS; j++) {
 				capacidadCamion = Comunes.MyRandom.nextInt(3);
@@ -71,19 +71,21 @@ public class EntregasWorld {
 			for (int j = 0; j < peticiones.size(); j++) {
 				horaActual = Comunes.MyRandom.nextInt(Comunes.NUM_HORAS);
 				camion = matrizCentrosHoras[i][horaActual];
-
-				while (counterCamiones++ < matrizCentrosHoras.length
+				counterCamiones=0;
+				while (counterCamiones < matrizCentrosHoras[i].length
 						&& camion != null
-						&& camion.isFull(peticiones.get(j)
-								.getCantidadPeticion())) {
+						&& camion.isFull(peticiones.get(j).getCantidadPeticion())) {
 					horaActual = Comunes.MyRandom.nextInt(Comunes.NUM_HORAS);
 					camion = matrizCentrosHoras[i][horaActual];
+					counterCamiones++;
 				}
-				counterCamiones = 0;
 
-				camion.addPeticion(peticiones.get(j));
+				if(!camion.isFull(peticiones.get(j).getCantidadPeticion())){
+					camion.addPeticion(peticiones.get(j));
+					totalPeticiones.remove(peticiones.get(j));
+				}
 
-				totalPeticiones.remove(peticiones.get(j));
+				
 			}
 		}
 	}
@@ -98,6 +100,7 @@ public class EntregasWorld {
 				while (libresCamiones[capacidadCamion] <= 0)
 					capacidadCamion--;
 				camion.setCapacidad(Comunes.CapacidadesMaximasCamiones[capacidadCamion]);
+				libresCamiones[capacidadCamion]--;
 				if (pendentPeticiones(j)) {
 					peticiones = centrosPeticiones.get(j);
 					for (int z = 0; z < peticiones.size()
@@ -123,8 +126,8 @@ public class EntregasWorld {
 	}
 
 	public double getMaximizedBenefit() {
-		double result = 0;
-
+		double act = 0;
+		double max=0;
 		Camion camion;
 		ArrayList<Peticion> peticionesCamion;
 		double precioPeticion;
@@ -133,25 +136,28 @@ public class EntregasWorld {
 				camion = matrizCentrosHoras[i][j];
 				if (camion != null) {
 					peticionesCamion = camion.getPeticiones();
+					act-=(camion.getCapacidad()-camion.getPesoActual())/100;
+					//System.out.println(camion.getCapacidad()-camion.getPesoActual());
 					for (int z = 0; z < peticionesCamion.size(); z++) {
 						precioPeticion = peticionesCamion.get(z).getPrecio();
-						if (j >= peticionesCamion.get(z).getHoraEntrega())
-							result += precioPeticion;
+						max += precioPeticion;
+						if (j <= peticionesCamion.get(z).getHoraEntrega())
+							act += precioPeticion;
+						
 						else
-							result += (precioPeticion - (precioPeticion * (0.2 * (j - peticionesCamion
-									.get(z).getHoraEntrega()))));
+							act += (precioPeticion - (precioPeticion * (0.2 * (j - peticionesCamion.get(z).getHoraEntrega()))));
+						
 					}
 				}
 			}
 		}
-
-		for (int i = 0; i < totalPeticiones.size(); i++) {
+		for (int i = 0; i < totalPeticiones.size(); i++) {	
 			precioPeticion = totalPeticiones.get(i).getPrecio();
-			result -= (precioPeticion + (precioPeticion * (0.2 * (9 - totalPeticiones
+			max += precioPeticion;
+			act -= (precioPeticion + (precioPeticion * (0.2 * (9 - totalPeticiones
 					.get(i).getHoraEntrega()))));
 		}
-
-		return result;
+		return (max-act);
 	}
 
 	public double getMinimizedDeliverTime() {
@@ -167,7 +173,7 @@ public class EntregasWorld {
 					peticionesCamion = camion.getPeticiones();
 					for (int z = 0; z < peticionesCamion.size(); z++) {
 						horaPeticion = peticionesCamion.get(z).getHoraEntrega();
-						result -= Math.abs(j - horaPeticion);
+						result += Math.abs(j - horaPeticion);
 					}
 				}
 			}
@@ -175,7 +181,7 @@ public class EntregasWorld {
 
 		for (int i = 0; i < totalPeticiones.size(); i++) {
 			horaPeticion = totalPeticiones.get(i).getHoraEntrega();
-			result -= (24 - horaPeticion);
+			result += (24 - horaPeticion);
 		}
 
 		return result;
@@ -198,17 +204,17 @@ public class EntregasWorld {
 			}
 		}
 
-		if (camion1 != null && camion2 != null && aux1 != null && aux2 != null) {
-			if (!camion1.isFull(aux2.getCantidadPeticion()
-					- aux1.getCantidadPeticion())
-					&& !camion2.isFull(aux1.getCantidadPeticion()
-							- aux2.getCantidadPeticion())) {
+		if ( aux1 != null && aux2 != null) {
+			if (!camion1.isFull(aux2.getCantidadPeticion()- aux1.getCantidadPeticion())
+					&& !camion2.isFull(aux1.getCantidadPeticion()- aux2.getCantidadPeticion())) {
 				camion1.removePeticion(aux1);
 				camion2.removePeticion(aux2);
 				camion1.addPeticion(aux2);
 				camion2.addPeticion(aux1);
+				
 				return true;
 			}
+			else return false;
 		}
 
 		if (aux1 == null)
@@ -216,7 +222,6 @@ public class EntregasWorld {
 
 		if (aux2 == null)
 			camion2 = null;
-
 		for (int i = 0; i < centrosPeticiones.get(centro).size()
 				&& (aux1 == null || aux2 == null); i++) {
 			if (aux1 == null
@@ -228,17 +233,13 @@ public class EntregasWorld {
 		}
 
 		if (aux1 != null && aux2 != null) {
-			if (camion1 != null
-					&& !camion1.isFull(aux2.getCantidadPeticion()
-							- aux1.getCantidadPeticion())) {
+			if (camion1 != null && !camion1.isFull(aux2.getCantidadPeticion()- aux1.getCantidadPeticion())) {
 				camion1.removePeticion(aux1);
 				totalPeticiones.remove(aux2);
 				camion1.addPeticion(aux2);
 				totalPeticiones.add(aux1);
 				return true;
-			} else if (camion2 != null
-					&& !camion2.isFull(aux1.getCantidadPeticion()
-							- aux2.getCantidadPeticion())) {
+			} else if (camion2 != null && !camion2.isFull(aux1.getCantidadPeticion()- aux2.getCantidadPeticion())) {
 				camion2.removePeticion(aux2);
 				totalPeticiones.remove(aux1);
 				camion2.addPeticion(aux1);
@@ -246,6 +247,7 @@ public class EntregasWorld {
 				return true;
 			}
 		}
+		
 		return false;
 	}
 
