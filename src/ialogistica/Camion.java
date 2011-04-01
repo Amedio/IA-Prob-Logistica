@@ -43,7 +43,7 @@ public class Camion {
 	}
 
 	public void removePeticion(Peticion peticion) {
-		if (this.peticiones.remove(peticion)) {
+		if (this.peticiones.remove(peticion)) {	
 			this.pesoActual -= peticion.getCantidadPeticion();
 			peticion.setAsignada(false);
 		}
@@ -62,7 +62,7 @@ public class Camion {
 	}
 
 	public boolean swappable(Camion camion) {
-		return (this.capacidad >= camion.pesoActual && camion.capacidad >= this.pesoActual)
+		return (this.capacidad >= camion.pesoActual) && (camion.capacidad >= this.pesoActual)
 				&& (this.capacidad != camion.capacidad);
 	}
 

@@ -191,8 +191,7 @@ public class ProbLogistica {
 		out.println("Introduzca el factor K:");
 		int k = Integer.parseInt(in.readLine());
 		out.println("Introduzca el valor lambda:");
-		double lambda = Integer.parseInt(in.readLine());
-		
+		double lambda = Double.parseDouble(in.readLine());
 		long start = System.currentTimeMillis();
 		System.out.println("Simulated Annealing");
 		System.out.println("-------------------");

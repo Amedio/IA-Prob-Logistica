@@ -37,7 +37,7 @@ public class SucesorSA implements SuccessorFunction {
 				if (worldCopia.swap(centro, peticiones.get(peticionPos1)
 						.getIdPeticion(), peticiones.get(peticionPos2)
 						.getIdPeticion()))
-					result.add(new Successor("SWAP", worldCopia));
+					result.add(new Successor("SWAP.....new heurisic value: " + worldCopia.getMaximizedBenefit(), worldCopia));
 				else
 					result = (ArrayList) getSuccessors(worldActual);
 			} catch (CloneNotSupportedException e) {
@@ -58,7 +58,7 @@ public class SucesorSA implements SuccessorFunction {
 					worldCopia = (EntregasWorld) worldActual.clone();
 					worldCopia.move(centro, hora, peticiones.get(peticionPos1)
 							.getIdPeticion());
-					result.add(new Successor("MOVE", worldCopia));
+					result.add(new Successor("MOVE.....new heurisic value: " + worldCopia.getMaximizedBenefit(), worldCopia));
 				} catch (CloneNotSupportedException e) {
 					e.printStackTrace();
 				}
@@ -76,7 +76,7 @@ public class SucesorSA implements SuccessorFunction {
 				worldCopia = (EntregasWorld) worldActual.clone();
 				if (worldCopia.swapCapacidadCamiones(centro1, hora1, centro2,
 						hora2))
-					result.add(new Successor("SWAP CANTIDAD CAMIONES", worldCopia));
+					result.add(new Successor("SWAP CANTIDAD CAMIONES.....new heurisic value: " + worldCopia.getMaximizedBenefit(), worldCopia));
 				else
 					result = (ArrayList) getSuccessors(worldActual);
 			} catch (CloneNotSupportedException e) {
