@@ -29,7 +29,6 @@ public class ProbLogistica {
 
 	public static void main(String[] args) throws Exception {
 
-		
 		out.println("All your base are belong to us!");
 		out.println("Introduzca el número de peticiones:");
 		int numPeticiones = Integer.parseInt(in.readLine());
@@ -79,11 +78,9 @@ public class ProbLogistica {
 		default:
 			break;
 		}
-		
+
 		out.println("Solución inicial generada...");
-		out.println(world);
-		out.println(world.getMaximizedBenefit());
-				
+
 		out.println();
 		int funcHeur = 0;
 		while (funcHeur != 1 && funcHeur != 2) {
@@ -91,9 +88,14 @@ public class ProbLogistica {
 			out.println("1. Maximizar beneficio");
 			out.println("2. Minimizar valor absoluto del tiempo de entrega");
 			funcHeur = Integer.parseInt(in.readLine());
+			tipo_heur = funcHeur;
 			if (funcHeur != 1 && funcHeur != 2)
 				out.println("Tiene que escoger una de las dos opciones!!!");
 		}
+
+		out.println(world);
+		out.println(tipo_heur == 1 ? world.getMaximizedBenefit() : world
+				.getMinimizedDeliverTime());
 
 		out.println();
 		int alg = 0;
@@ -157,7 +159,8 @@ public class ProbLogistica {
 				throw new IllegalArgumentException("Parametros incorrectos.");
 			}
 
-			problem = new Problem(world, new SucesorHC(), new EntregasGoalTest(), heuristica);
+			problem = new Problem(world, new SucesorHC(),
+					new EntregasGoalTest(), heuristica);
 
 			// Iniciamos la clase AIMA
 			Search search = new HillClimbingSearch();
@@ -178,16 +181,14 @@ public class ProbLogistica {
 	/**
 	 * Algoritmo Simulated Annealing
 	 */
-	private static void BusquedaSA(EntregasWorld world, int funcion_heuristica) throws Exception{
-
-		
-		
-		
+	private static void BusquedaSA(EntregasWorld world, int funcion_heuristica)
+			throws Exception {
 
 		out.println("Introduzca iteraciones:");
 		int iteraciones = Integer.parseInt(in.readLine());
 		out.println("Introduzca las iteraciones por paso:");
-		int iteraciones_por_paso  = Integer.parseInt(in.readLine());;
+		int iteraciones_por_paso = Integer.parseInt(in.readLine());
+		;
 		out.println("Introduzca el factor K:");
 		int k = Integer.parseInt(in.readLine());
 		out.println("Introduzca el valor lambda:");
