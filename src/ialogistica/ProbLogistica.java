@@ -100,7 +100,7 @@ public class ProbLogistica {
 		out.println();
 		int alg = 0;
 		while (alg != 1 && alg != 2) {
-			out.println("Elija la heurística:");
+			out.println("Elija el algoritmo:");
 			out.println("1. Hill Climbing");
 			out.println("2. Simulated Annealing");
 			alg = Integer.parseInt(in.readLine());
@@ -118,21 +118,6 @@ public class ProbLogistica {
 		default:
 			break;
 		}
-
-		/*
-		 * // Imprime por pantalla el estado de la solucion inicial
-		 * System.out.println(entregas.toString());
-		 * 
-		 * // Ejecuta el algoritmo de AIMA correspondiente if
-		 * (Integer.parseInt(args[5]) == 1) { BusquedaHC(entregas,
-		 * Integer.parseInt(args[4])); } else if (Integer.parseInt(args[5]) ==
-		 * 2) { BusquedaSA(entregas, Integer.parseInt(args[4]),
-		 * Integer.parseInt(args[6]), Integer.parseInt(args[7]),
-		 * Integer.parseInt(args[8]), Double.parseDouble(args[9])); } else {
-		 * throw new IllegalArgumentException(
-		 * "Parametros incorrectos. Ejecuta el programa sin parametros para ver la ayuda."
-		 * ); }
-		 */
 	}
 
 	/**
